@@ -167,7 +167,7 @@
                 "osProfile": {
                     "computerName": "[parameters('virtualMachines_tw_lin2016_name')]",
                     "adminUsername": "tom",
-                    "adminPassword": "P@ssw0rd1234!!",
+                    "adminPassword": "P@ssw0rd1234567!!",
                     "linuxConfiguration": {
                         "disablePasswordAuthentication": false,
                         "provisionVMAgent": true
