@@ -1,5 +1,5 @@
 # Azure ARM Templates
-Deploy resources in Azure with Azure ARM Templates
+Deploy resources in Azure with Azure ARM and Bicep Templates
 
 ## The goal of this repository
 This repository contains Azure ARM and Bicep templates to deploy resources in Azure. These templates can be used to deploy resources in Azure using the Azure CLI or Azure PowerShell.
