@@ -18,7 +18,7 @@ To install the arm-ttk module, open PowerShell and run the following command:
 Get-ChildItem *.ps1, *.psd1, *.ps1xml, *.psm1 -Recurse | Unblock-File
 
 #Import the module
-Import-Module .\arm-ttk.psd1
+Import-Module .\arm-ttk.psd1 -Force
 ```
 
 ### Running Tests

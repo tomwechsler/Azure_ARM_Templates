@@ -1,4 +1,4 @@
-# Azure ARM Templates
+# Azure ARM and Bicep Templates
 Deploy resources in Azure with Azure ARM and Bicep Templates
 
 ## The goal of this repository
