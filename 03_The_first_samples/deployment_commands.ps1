@@ -8,7 +8,7 @@ Connect-AzAccount
 Get-AzResourceGroup
 
 #Create a new resource group
-New-AzResourceGroup -Name "psdemorg" -location "westeurope"
+New-AzResourceGroup -Name "cttdemorg" -location "westeurope"
 
 #Deploy the armtemplate file
 New-AzResourceGroupDeployment -name "armtemplate" -ResourceGroupName "psdemorg" -TemplateFile "./03_01_blanksamplearm.json" -WhatIf
