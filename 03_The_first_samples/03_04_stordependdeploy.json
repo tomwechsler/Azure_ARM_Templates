@@ -1,0 +1,82 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "storageNameSeperate": {
+            "type": "string",
+            "metadata": {
+                "description": "name of storage account"
+            }
+        },
+        "storageNameNested": {
+            "type": "string",
+            "metadata": {
+                "description": "name of storage account"
+            }
+        },
+        "containerNameSeperate": {
+            "type": "string",
+            "metadata": {
+                "description": "name of storage container"
+            }
+        },
+        "containerNameNested": {
+            "type": "string",
+            "metadata": {
+                "description": "name of storage container"
+            }
+        }
+    },
+    "functions": [],
+    "variables": {},
+    "resources": [
+        {
+            "name": "[parameters('storageNameSeperate')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2021-04-01",
+            "location": "[resourceGroup().location]",
+            "kind": "StorageV2",
+            "sku": {
+                "name": "Premium_LRS",
+                "tier": "Premium"
+            }
+        },
+        {
+            "name": "[concat(parameters('storageNameSeperate'), '/default/', parameters('containerNameSeperate') )]",
+            "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+            "apiVersion": "2021-04-01",
+            "dependsOn": [
+                "[parameters('storageNameSeperate')]"
+            ],
+            "properties": {
+                "publicAccess": "None"
+            }
+        },
+        
+        {
+            "name": "[parameters('storageNameNested')]",
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2021-04-01",
+            "location": "[resourceGroup().location]",
+            "kind": "StorageV2",
+            "sku": {
+                "name": "Premium_LRS",
+                "tier": "Premium"
+            },
+            "resources": [
+                {
+                    "name": "[concat(parameters('storageNameNested'), '/default/', parameters('containerNameNested') )]",
+                    "type": "Microsoft.Storage/storageAccounts/blobServices/containers",
+                    "apiVersion": "2021-04-01",
+                    "dependsOn": [
+                        "[parameters('storageNameNested')]"
+                    ],
+                    "properties": {
+                        "publicAccess": "None"
+                    }
+                }
+            ]
+        }
+    ],
+    "outputs": {}
+}

@@ -1,0 +1,12 @@
+# Create a Variable Object to include all of the Parameters and values #
+
+$ParamObj = @{
+storageNameSeperate =  "cttstorageseparate"
+containerNameSeperate = "cttcontainerseparate"
+storageNameNested = "cttstoragenested"
+containerNameNested = "cttcontainernested"
+} 
+
+
+# Deploy with Parameter Object #
+New-AzResourceGroupDeployment  -Name <deployment name> -ResourceGroupName <resource group name>  -TemplateFile "<template file location>" -TemplateParameterObject $ParamObj -Verbose
