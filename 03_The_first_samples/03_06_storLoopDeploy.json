@@ -2,21 +2,22 @@
     "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "deployStorage": {
-            "type": "bool",
+        "storageCount": {
+            "type": "int",
             "metadata": {
-                "description": "boolean condition to deploy or not"
+                "description": "number of storage accounts to be deployed"
             }
         }
     },
     "functions": [],
-    "variables": {
-        "storageName": "cttboolstorage1"
-    },
+    "variables": {},
     "resources": [
         {
-            "condition": "[parameters('deployStorage')]",
-            "name": "[variables('storageName')]",
+            "name": "[toLower(concat('storage', copyIndex(1), uniqueString(resourceGroup().id)))]",
+            "copy": {
+                "name": "storageloop",
+                "count": "[parameters('storageCount')]"
+            },
             "type": "Microsoft.Storage/storageAccounts",
             "apiVersion": "2021-04-01",
             "location": "[resourceGroup().location]",
@@ -24,6 +25,9 @@
             "sku": {
                 "name": "Premium_LRS",
                 "tier": "Premium"
+            },
+            "properties": {
+                "supportsHttpsTrafficOnly": true
             }
         }
     ],
