@@ -1,0 +1,22 @@
+#PowerShell#
+
+#Validate file#
+Test-AzResourceGroupDeployment -ResourceGroupName debugRg -TemplateFile 05_03_vmDebug.bicep
+
+#View the deployment operations for deployment#
+Get-AzResourceGroupDeploymentOperation -DeploymentName debugdeploy1 -ResourceGroupName debugRg
+
+#Filter to failed operations#
+Get-AzResourceGroupDeploymentOperation -ResourceGroupName debugRg -Name debugdeploy1 | Where-Object { $_.ProvisioningState -eq "Failed" }
+
+
+#CLI#
+
+#Validate file#
+az deployment group validate --resource-group debugRg --template-file 05_03_vmDebug.bicep
+
+#View the deployment operations for deployment#
+az deployment operation group list --name debugdeploy1 --resource-group debugRg
+
+#Filter to failed operations#
+az deployment operation group list --resource-group debugRg --name debugdeploy1 --query "[?properties.provisioningState=='Failed'].properties.statusMessage.error"

@@ -1,0 +1,16 @@
+#PowerShell#
+
+#Roll back to previous deployment on error#
+New-AzResourceGroupDeployment -Name historydeploy3 -ResourceGroupName deployHistoryRG -TemplateFile 05_04_deployHistory.bicep -RollbackToLastDeployment
+
+#Roll back to specific deployment on error#
+New-AzResourceGroupDeployment -Name historydeploy3 -ResourceGroupName deployHistoryRG -TemplateFile 05_04_deployHistory.bicep -RollBackDeploymentName historydeploy1
+
+
+#CLI#
+
+#Roll back to previous deployment on error#
+az deployment group create  --name historydeploy3 --resource-group deployHistoryRG  --template-file 05_04_deployHistory.bicep --rollback-on-error
+
+#Roll back to specific deployment on error#
+az deployment group create  --name historydeploy3 --resource-group deployHistoryRG  --template-file 05_04_deployHistory.bicep --rollback-on-error historydeploy1

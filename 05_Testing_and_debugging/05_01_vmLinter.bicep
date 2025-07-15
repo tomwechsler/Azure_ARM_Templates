@@ -1,29 +1,28 @@
-param vmUserName string = 'awesomeadmin'
+param computerName string
 
 @secure()
-param vmPass string
+param adminPassword string = 'awesomeadmin'
 
-var location = resourceGroup().location
-var vmName = 'vm${uniqueString(resourceGroup().id)}'
+var adminUserName = 'awesomeadmin'
 
-resource vm 'Microsoft.Compute/virtualMachines@2021-03-01' = {
-  name: vmName
-  location: location
+resource vmName 'Microsoft.Compute/virtualMachines@2021-03-01' = {
+  name: concat('awesomevm',uniqueString(resourceGroup().id))
+  location: 'eastus'
   properties: {
     hardwareProfile: {
       vmSize: 'Standard_DS1_v2'
     }
     osProfile: {
-      computerName: vmName
-      adminUsername: vmUserName
-      adminPassword: vmPass
+      computerName: 'awesomevm'
+      adminUsername: 'name'
+      adminPassword: adminPassword
     }
     storageProfile: {
       imageReference: {
         publisher: 'MicrosoftWindowsServer'
         offer: 'WindowsServer'
         sku: '2019-Datacenter'
-        version: 'latest'
+        version: 'preview'
       }
       osDisk: {
         createOption: 'FromImage'
@@ -32,7 +31,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2021-03-01' = {
         }
       }
     }
-    networkProfile: {
+  networkProfile: {
       networkInterfaces: [
         {
           id: nic.id
@@ -45,35 +44,14 @@ resource vm 'Microsoft.Compute/virtualMachines@2021-03-01' = {
       }
     }
   }
-}
-
-resource nic 'Microsoft.Network/networkInterfaces@2021-02-01' = {
-  name: 'nic${vmName}'
-  location: location
-  properties: {
-    ipConfigurations: [
-      {
-        name: 'ipconfig1'
-        properties: {
-          privateIPAllocationMethod: 'Dynamic'
-          publicIPAddress: {
-            id: publicIp.id
-          }
-          subnet: {
-            id: resourceId('Microsoft.Network/virtualNetworks/subnets', 'awesomevnet', 'awesomesubnet')
-          }
-        }
-      }
-    ]
-    networkSecurityGroup: {
-      id: resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', 'awesomensg')
-    }
-  }
+  dependsOn: [
+    nic
+  ]
 }
 
 resource publicIp 'Microsoft.Network/publicIPAddresses@2021-02-01' = {
-  name: 'ip${vmName}'
-  location: location
+  name: 'awesomeip'
+  location: 'eastus'
   sku: {
     name: 'Basic'
   }
@@ -84,7 +62,7 @@ resource publicIp 'Microsoft.Network/publicIPAddresses@2021-02-01' = {
 
 resource networkSecurityGroup 'Microsoft.Network/networkSecurityGroups@2021-02-01' = {
   name: 'awesomensg'
-  location: location
+  location: 'eastus'
   properties: {
     securityRules: [
       {
@@ -106,7 +84,7 @@ resource networkSecurityGroup 'Microsoft.Network/networkSecurityGroups@2021-02-0
 
 resource virtualNetwork 'Microsoft.Network/virtualNetworks@2021-02-01' = {
   name: 'awesomevnet'
-  location: location
+  location: 'eastus'
   properties: {
     addressSpace: {
       addressPrefixes: [
@@ -121,5 +99,30 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2021-02-01' = {
         }
       }
     ]
+  }
+}
+
+
+resource nic 'Microsoft.Network/networkInterfaces@2021-02-01' = {
+  name: 'awesomenic'
+  location: 'eastus'
+  properties: {
+    ipConfigurations: [
+      {
+        name: 'ipconfig1'
+        properties: {
+          privateIPAllocationMethod: 'Dynamic'
+          publicIPAddress: {
+            id: publicIp.id
+          }
+          subnet: {
+            id: resourceId('Microsoft.Network/virtualNetworks/subnets', 'awesomevnet', 'awesomesubnet')
+          }
+        }
+      }
+    ]
+    networkSecurityGroup: {
+      id: resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', 'awesomensg')
+    }
   }
 }

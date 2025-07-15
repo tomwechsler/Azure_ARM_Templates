@@ -1,17 +1,22 @@
-param vmUserName string = 'awesomeadmin'
-
 @secure()
 param vmPass string
+@allowed([
+  'prod'
+  'dev'
+])
+param devOrProd string
+param vmUserName string = 'awesomeadmin'
 
-var location = resourceGroup().location
 var vmName = 'vm${uniqueString(resourceGroup().id)}'
+var location = resourceGroup().location
+var vmSize = (devOrProd == 'prod') ? 'Standard_D2s_v3' : 'Standard_DS1_v2'
 
 resource vm 'Microsoft.Compute/virtualMachines@2021-03-01' = {
   name: vmName
   location: location
   properties: {
     hardwareProfile: {
-      vmSize: 'Standard_DS1_v2'
+      vmSize: vmSize
     }
     osProfile: {
       computerName: vmName
@@ -32,7 +37,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2021-03-01' = {
         }
       }
     }
-    networkProfile: {
+  networkProfile: {
       networkInterfaces: [
         {
           id: nic.id
@@ -47,32 +52,8 @@ resource vm 'Microsoft.Compute/virtualMachines@2021-03-01' = {
   }
 }
 
-resource nic 'Microsoft.Network/networkInterfaces@2021-02-01' = {
-  name: 'nic${vmName}'
-  location: location
-  properties: {
-    ipConfigurations: [
-      {
-        name: 'ipconfig1'
-        properties: {
-          privateIPAllocationMethod: 'Dynamic'
-          publicIPAddress: {
-            id: publicIp.id
-          }
-          subnet: {
-            id: resourceId('Microsoft.Network/virtualNetworks/subnets', 'awesomevnet', 'awesomesubnet')
-          }
-        }
-      }
-    ]
-    networkSecurityGroup: {
-      id: resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', 'awesomensg')
-    }
-  }
-}
-
 resource publicIp 'Microsoft.Network/publicIPAddresses@2021-02-01' = {
-  name: 'ip${vmName}'
+  name: 'awesomeip'
   location: location
   sku: {
     name: 'Basic'
@@ -104,22 +85,46 @@ resource networkSecurityGroup 'Microsoft.Network/networkSecurityGroups@2021-02-0
   }
 }
 
-resource virtualNetwork 'Microsoft.Network/virtualNetworks@2021-02-01' = {
-  name: 'awesomevnet'
+// resource virtualNetwork 'Microsoft.Network/virtualNetworks@2021-02-01' = {
+//   name: 'awesomevnet'
+//   location: location
+//   properties: {
+//     addressSpace: {
+//       addressPrefixes: [
+//         '10.0.0.0/16'
+//       ]
+//     }
+//     subnets: [
+//       {
+//         name: 'awesomesubnet'
+//         properties: {
+//           addressPrefix: '10.0.0.0/24'
+//         }
+//       }
+//     ]
+//   }
+// }
+
+resource nic 'Microsoft.Network/networkInterfaces@2021-02-01' = {
+  name: 'awesomenic'
   location: location
   properties: {
-    addressSpace: {
-      addressPrefixes: [
-        '10.0.0.0/16'
-      ]
-    }
-    subnets: [
+    ipConfigurations: [
       {
-        name: 'awesomesubnet'
+        name: 'ipconfig1'
         properties: {
-          addressPrefix: '10.0.0.0/24'
+          privateIPAllocationMethod: 'Dynamic'
+          publicIPAddress: {
+            id: publicIp.id
+          }
+          subnet: {
+            id: resourceId('Microsoft.Network/virtualNetworks/subnets', 'awesomevnet', 'awesomesubnet')
+          }
         }
       }
     ]
+    networkSecurityGroup: {
+      id: resourceId(resourceGroup().name, 'Microsoft.Network/networkSecurityGroups', 'awesomensg')
+    }
   }
 }

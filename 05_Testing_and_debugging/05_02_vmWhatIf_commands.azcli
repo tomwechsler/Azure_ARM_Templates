@@ -1,0 +1,14 @@
+#Login to Azure
+az login --use-device-code
+az account show --query name
+
+#Set primary subscription if you have multiple
+az account set --subscription "Your subscription name"
+
+#List all RG names
+az group list -o table
+
+#Create a resource group
+az group create -n 'whatIfrg' -l 'westeurope'
+
+az deployment group what-if --name "whatifdeploy2" --resource-group "whatIfrg" --template-file .\05_02_vmWhatIf.bicep
