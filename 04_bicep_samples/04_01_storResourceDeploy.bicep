@@ -1,5 +1,5 @@
 resource storageaccount 'Microsoft.Storage/storageAccounts@2021-02-01' = {
-  name: 'awesomestorage1343719834'
+  name: 'cttprod2025'
   location: 'westeurope'
   kind: 'StorageV2'
   sku: {
